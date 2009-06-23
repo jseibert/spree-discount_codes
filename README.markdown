@@ -1,6 +1,6 @@
 # Affiliate System #
 
-## extensions ## 
+## extensions
 This extension creates a DiscountCode resource. 
 	discount_code belongs_to :user 
 	order has_many :discount_codes
@@ -14,6 +14,6 @@ The methods added:
 	order.calculate_discount
 	order.calculate_commission
 
-## theory ## 
+## theory
 
 A user can become an affiliate by adding a discount_code
