@@ -43,17 +43,14 @@ class TftExtension < Spree::Extension
       attr_accessible :discount_codes_attributes
       include Affiliate
     end
-    
+    #######################
+    # The Order gets by with a little help from friends
     Order.class_eval do
       belongs_to :discount_code      
-#      def initialize
-#         require "rubygems"; require "ruby-debug"; debugger 
-#         super
-#      end
 
-     # def total
-     #   self.total = self.item_total + self.ship_amount + self.tax_amount - self.calculate_discount
-     # end
+     def total
+       self.total = self.item_total + self.ship_amount + self.tax_amount - self.calculate_discount
+     end
 
       def update_totals
         # finalize order totals 
@@ -64,15 +61,17 @@ class TftExtension < Spree::Extension
           self.ship_amount = 0
         end
         self.tax_amount       = calculate_tax
-        #self.discount_total   = calculate_discount
-        #self.commission_total = calculate_commission
+        self.discount_total   = calculate_discount
+        self.commission_total = calculate_commission
       end
 
       def calculate_discount
-        self.item_total * self.discount_code.discount_rate 
+        return 0.0 if self.discount_code.nil?
+        self.item_total * self.discount_code.discount_rate
       end
 
       def calculate_commission
+        return 0.0 if self.discount_code.nil?
         self.item_total * self.discount_code.commission_rate
       end
       
