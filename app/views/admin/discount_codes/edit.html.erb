@@ -1,6 +1,6 @@
-<h2>Update Discount Code </h2>
+<h1>Edit Discount Code </h1>
 
 <% form_for @discount_code, :url => admin_discount_code_path do |dc|%>
-	<%= render :partial => 'admin/discount_codes/form', :locals => { :form => dc }%>	
-	<%= dc.submit "update" %>
+	<%= render :partial => 'admin/discount_codes/form', :locals => { :f => dc }%>	
+	<%= render :partial => 'admin/shared/edit_resource_links' %>
 <% end %>

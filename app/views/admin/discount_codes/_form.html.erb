@@ -1,15 +1,41 @@
-<%= form.label :expires_on, "Expiration Date"%>
-<%= form.date_select :expires_on , :default => 1.year.from_now %>
-<br />
+<div class="yui-gb">
+  <div class="yui-u first">
+    <% f.field_container :code do %>
+      <%= f.label :code, t("code") %> <span class="required">*</span><br />
+      <%= f.text_field :code, :class => 'title'  %>
+      <%= f.error_message_on :code %>
+    <% end %>
 
-<%= form.label :comments, "Comments"%>
-<%= form.text_field :comments  %>
-<br />
+    <% f.field_container :discount_rate do %>
+      <%= f.label :discount_rate, t("discount_rate") %> <span class="required">*</span><br />
+      <%= f.text_field :discount_rate, :class => 'title'  %>
+      <%= f.error_message_on :discount_rate %>
+    <% end %>
 
-<%= form.label :discount_rate, "Discount"%>
-<%= form.text_field :discount_rate  %>
-<br />
-
-<%= form.label :commission_rate, "Commission"%>
-<%= form.text_field :commission_rate  %>
-<br />
+    <% f.field_container :commission_rate do %>
+      <%= f.label :commission_rate, t("commission_rate") %> <br />
+      <%= f.text_field :commission_rate, :class => 'title'  %>
+      <%= f.error_message_on :commission_rate %>
+    <% end %>
+    
+    <p>
+      <%= f.label :available_on, t("available_on") %><br />
+      <%= f.error_message_on :available_on %>
+      <%= calendar_date_select :discount_code, :available_on, :style=>"width:150px" %>
+    </p>
+  
+    <p>
+      <%= f.label :expires_on, t("expires_on") %><br />
+      <%= f.error_message_on :expires_on %>
+      <%= calendar_date_select :discount_code, :expires_on, :style=> "width:150px" %>
+    </p>
+  </div>
+  
+  <div class="yui-u">
+    <% f.field_container :comments do %>
+      <%= f.label :comments, t("comments")%><br />
+      <%= f.text_area :comments, :size => "30x3"  %>
+      <%= f.error_message_on :comments%>
+    <% end %>
+  </div>
+</div>

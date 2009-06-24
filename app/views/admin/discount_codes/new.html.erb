@@ -1,0 +1,9 @@
+<%= error_messages_for :discount_code %>
+
+
+<% form_for(@discount_code,  :url => collection_url, :html => { :multipart => true }) do |f| %>
+<fieldset>
+  <%= render :partial => 'admin/discount_codes/form', :locals => {:f => f} %>
+  <%= render :partial => 'admin/shared/new_resource_links' %>
+</fieldset>
+<% end %>

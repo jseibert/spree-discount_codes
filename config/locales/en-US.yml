@@ -1,0 +1,10 @@
+en-US:
+  discount_codes: "Discount Codes & Affiliates"
+  new_discount_code: "New Discount Code"
+  code: Code
+  comments: Description
+  discount_rate: Discount
+  affiliate: Affiliate
+  commission_rate: Affiliate Commission
+  expires: Expires
+  expires_on: "Expires On"

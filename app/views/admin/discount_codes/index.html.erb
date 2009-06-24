@@ -1,28 +1,54 @@
-<table>
-<caption>Discount Codes & Affiliates</caption>
-<thead>
-  <tr>
-  <th>Update</th>
-  <th>Affiliate</th>
-  <th>Expiration Date</th>
-  <th>Code</th>  
-  <th>Comments</th>  
-  <th>Discount</th>  
-  <th>Commission</th>  
+<% content_for :head do %>
+  <%= calendar_date_select_includes %>
+<% end %>
 
-  </tr>
-</thead>
-<tbdoy>
-	<% @discount_codes.each do |discount_code| %>
+<div class='toolbar'>
+  <ul class='actions'>
+    <li id="new_ot_link">
+      <%= button_link_to_remote t("new_discount_code"), 
+                         {:url => new_object_url, 
+                         :method => :get,
+                         :update => "new-product",
+                         :before => "Element.hide('new_ot_link');Element.show('busy_indicator')", 
+                         :complete => "Element.hide('busy_indicator')"}, :icon => 'add' %>
+    </li>
+  </ul>
+  <br class='clear' />
+</div>
+
+<h1><%= "#{t("actions.listing")} #{t("discount_codes")}" %></h1>
+
+<%= image_tag "spinner.gif", :plugin=>"spree", :style => "display:none", :id => 'busy_indicator' %>
+<div id="new-product"></div>
+
+<table class="index">
   <tr>
-    <td><%= link_to "update", edit_admin_discount_code_url( discount_code ) %></td>
-    <td><%= discount_code.user.login %></td>
-    <td><%= discount_code.expires_on %></td>
+    <th><%= order_by_link :code, :text => t("code") %></th>
+    <th><%= order_by_link :comments, :text => t("comments") %></th>
+    <th><%= order_by_link :discount_rate, :text => t("discount_rate") %></th>
+    <th><%= t("affiliate") %></th>
+    <th><%= order_by_link :commission_rate, :text => t("commission_rate") %></th>
+    <th><%= order_by_link :expires_on, :text => t("expires") %></th>
+    <th>&nbsp;</th>
+  </tr>
+<% @collection.each do |discount_code| %>
+  <tr <%= 'style="color:red;"' unless discount_code.deleted_at.nil? %>>
     <td><%= discount_code.code %></td>
     <td><%= discount_code.comments %></td>  
     <td><%= discount_code.discount_rate %></td>  
-    <td><%= discount_code.commission_rate %></td>  
+    <td><%= discount_code.user.login if discount_code.user %></td>
+    <td><%= discount_code.commission_rate %></td>
+    <td><%= discount_code.expires_on %></td>
+    <td class="actions">
+      <%= link_to_edit discount_code if discount_code.deleted_at.nil?  %>
+      &nbsp;
+      <%= link_to_delete discount_code if discount_code.deleted_at.nil?  %>
+    </td>
   </tr>
-	<% end %>
-</tbody>
+<% end %>
 </table>
+<%= page_links(:prev => "&#171; #{t('previous')}", :next => "#{t('next')} &#187;") if @search.page_count > 1 %>
+
+<% content_for :sidebar do %>
+  
+<% end %>

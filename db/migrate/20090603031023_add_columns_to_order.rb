@@ -6,5 +6,8 @@ class AddColumnsToOrder < ActiveRecord::Migration
   end
 
   def self.down
+    drop_column :orders, :discount_code_id
+    drop_column :orders, :discount_total
+    drop_column :orders, :commission_total
   end
 end
