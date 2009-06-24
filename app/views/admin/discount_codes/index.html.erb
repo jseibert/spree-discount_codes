@@ -25,6 +25,7 @@
   <tr>
     <th><%= order_by_link :code, :text => t("code") %></th>
     <th><%= order_by_link :comments, :text => t("comments") %></th>
+    <th><%= order_by_link :discount_type, :text => t("type") %></th>
     <th><%= order_by_link :discount_rate, :text => t("discount_rate") %></th>
     <th><%= t("affiliate") %></th>
     <th><%= order_by_link :commission_rate, :text => t("commission_rate") %></th>
@@ -35,6 +36,7 @@
   <tr <%= 'style="color:red;"' unless discount_code.deleted_at.nil? %>>
     <td><%= discount_code.code %></td>
     <td><%= discount_code.comments %></td>  
+    <td style="text-transform: capitalize;"><%= discount_code.discount_type %></td> 
     <td><%= discount_code.discount_rate %></td>  
     <td><%= discount_code.user.login if discount_code.user %></td>
     <td><%= discount_code.commission_rate %></td>

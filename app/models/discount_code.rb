@@ -1,6 +1,8 @@
 class DiscountCode < ActiveRecord::Base
   belongs_to :user
   
+  default_value_for :discount_type, "dollar amount"
+  
   default_value_for :code do
     DiscountCode.generate_code
   end
@@ -25,6 +27,10 @@ class DiscountCode < ActiveRecord::Base
       new_code = generate_code(code_length)
     end until !active_code?( new_code )
     new_code
+  end
+  
+  def self.type_options
+    ['dollar amount', 'percent']
   end
   
   # Checks the database to ensure the specified code is not taken

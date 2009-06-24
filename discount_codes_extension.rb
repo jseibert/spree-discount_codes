@@ -84,7 +84,7 @@ class DiscountCodesExtension < Spree::Extension
       
       def find_discount_code
         if self.discount_code_code
-          self.discount_code = DiscountCode.find_by_code(self.discount_code_code)
+          self.discount_code = DiscountCode.find_by_code(self.discount_code_code.uppercase)
         end
       end  
 
@@ -96,7 +96,12 @@ class DiscountCodesExtension < Spree::Extension
       def discount_total
         discount = 0.0 
         if self.discount_code
-          discount = self.item_total * self.discount_code.discount_rate
+          case self.discount_code.discount_type
+          when "dollar amount":
+            discount = self.discount_code.discount_rate
+          when "percent":
+            discount = self.item_total.to_f * self.discount_code.discount_rate.to_f / 100.00
+          end
         end
         discount *= -1
       end
@@ -104,7 +109,12 @@ class DiscountCodesExtension < Spree::Extension
       def commission_total
         commission_total = 0.0 
         if self.discount_code
-          commission_total = self.item_total * self.discount_code.commission_rate
+          case self.discount_code.discount_type
+          when "dollar amount":
+            commission_total = self.discount_code.commission_rate
+          when "percent":
+            commission_total = self.item_total.to_f * self.discount_code.commission_rate.to_f / 100.00
+          end
         end
       end
       
