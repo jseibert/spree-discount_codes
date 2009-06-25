@@ -15,8 +15,8 @@ class DiscountCodesExtension < Spree::Extension
   def activate
 
     Admin::UsersController.class_eval do
-    before_filter :add_discount_code_fields
-    after_filter :bulid_discount_code, :only => [:new,:edit]
+      before_filter :add_discount_code_fields
+      after_filter :bulid_discount_code, :only => [:new,:edit]
 
       def add_discount_code_fields
         @extension_partials << 'discount_codes'
@@ -26,6 +26,24 @@ class DiscountCodesExtension < Spree::Extension
         @user.discount_codes.build
       end
 
+    end
+    
+    Spree::BaseController.class_eval do
+      def apply_discount_code
+        if params[:promo]
+          @order = find_order
+          @order.discount_code = DiscountCode.find_by_code(params[:promo])
+          @order.save
+        end
+      end
+    end
+    
+    OrdersController.class_eval do
+      before_filter :apply_discount_code
+    end
+    
+    ProductsController.class_eval do
+      before_filter :apply_discount_code
     end
 
     Admin::ConfigurationsController.class_eval do
@@ -72,6 +90,43 @@ class DiscountCodesExtension < Spree::Extension
         amount += Spree::VatCalculator.calculate_tax(order) if Spree::Tax::Config[:show_price_inc_vat]    
 
         options.delete(:format_as_currency) ? number_to_currency(amount) : amount
+      end
+    end
+    
+    ProductsHelper.class_eval do
+      def product_price(product_or_variant, options={})
+        options.assert_valid_keys(:format_as_currency)
+        options.reverse_merge! :format_as_currency => true
+
+        amount = product_or_variant.is_a?(Product) ? product_or_variant.master_price : product_or_variant.price
+        
+        unless session[:order_id].blank?
+          order = Order.find_or_create_by_id(session[:order_id])
+          if order.discount_code && order.discount_code.applies_to?(product_or_variant)
+            amount -= order.discount_code.value_for_product_amount(amount)
+          end
+        end
+        
+        options[:format_as_currency] ? number_to_currency(amount, options) : amount
+      end
+      
+      # returns nil if there is no discount
+      def product_price_without_discount(product_or_variant, options={})
+        options.assert_valid_keys(:format_as_currency)
+        options.reverse_merge! :format_as_currency => true
+
+        amount = product_or_variant.is_a?(Product) ? product_or_variant.master_price : product_or_variant.price
+        
+        unless session[:order_id].blank?
+          order = Order.find_or_create_by_id(session[:order_id])
+          if order.discount_code && order.discount_code.applies_to?(product_or_variant)
+            if order.discount_code.value_for_product_amount(amount) > 0.0
+              return options[:format_as_currency] ? number_to_currency(amount, options) : amount
+            end
+          end
+        end
+        
+        nil
       end
     end
     
@@ -134,7 +189,7 @@ class DiscountCodesExtension < Spree::Extension
       private
       def find_discount_code
         if self.discount_code_code
-          self.discount_code = DiscountCode.find_by_code(self.discount_code_code.upcase)
+          self.discount_code = DiscountCode.find_by_code(self.discount_code_code)
         end
       end
       
