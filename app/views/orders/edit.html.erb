@@ -14,7 +14,7 @@
 		</p>
     <h3><%= "#{t("subtotal")}: #{order_price(@order)}" %></h3>
 		<% if @order.discount_code %>
-    <h3><%= "Discount: $#{ @order.calculate_discount }"%></h3>
+    <h3><%= "Discount: $#{ @order.discount_total }"%></h3>
 		<% end %>
     <div class="links">
       <%= link_to image_tag('/images/update.png') + t("update"), '#', :class => 'button checkout primary', :onclick => "$('form#updatecart').submit(); return false;" %>

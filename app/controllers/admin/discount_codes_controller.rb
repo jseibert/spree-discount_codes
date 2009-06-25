@@ -1,5 +1,6 @@
 class Admin::DiscountCodesController < Admin::BaseController
   layout "admin"
+  before_filter :load_data
   resource_controller
   
   new_action.response do |wants|
@@ -12,6 +13,12 @@ class Admin::DiscountCodesController < Admin::BaseController
   
   update.response do |wants| 
     wants.html {redirect_to collection_url }
+  end
+  
+  
+  private
+  def load_data
+    @products = Product.not_deleted  
   end
   
   def collection 

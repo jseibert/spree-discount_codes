@@ -80,41 +80,72 @@ class DiscountCodesExtension < Spree::Extension
     Order.class_eval do
       belongs_to :discount_code
       attr_accessor :discount_code_code
-      before_save :find_discount_code
-      
-      def find_discount_code
-        if self.discount_code_code
-          self.discount_code = DiscountCode.find_by_code(self.discount_code_code.uppercase)
-        end
-      end  
+      before_save :find_discount_code 
 
       def total_with_discount
         self.total = total_without_discount + self.discount_total
       end
       alias_method_chain :total, :discount
+      
+      def update_totals_with_discount
+        update_totals_without_discount
+        discount_total
+        commission_total
+      end
+      alias_method_chain :update_totals, :discount
 
       def discount_total
         discount = 0.0 
-        if self.discount_code
+        applicable_line_items = discount_scope
+        unless applicable_line_items.empty?
           case self.discount_code.discount_type
           when "dollar amount":
             discount = self.discount_code.discount_rate
+          when 'dollar amount per item':
+            applicable_line_items.each do |li|
+              discount += self.discount_code.discount_rate * li.quantity
+            end
           when "percent":
             discount = self.item_total.to_f * self.discount_code.discount_rate.to_f / 100.00
           end
         end
-        discount *= -1
+        self[:discount_total] = discount * -1
       end
 
       def commission_total
-        commission_total = 0.0 
-        if self.discount_code
+        commission = 0.0
+        applicable_line_items = discount_scope
+        unless applicable_line_items.empty?
           case self.discount_code.discount_type
           when "dollar amount":
-            commission_total = self.discount_code.commission_rate
+            commission = self.discount_code.commission_rate
+          when 'dollar amount per item':
+            applicable_line_items.each do |li|
+              commission += self.discount_code.commission_rate * li.quantity
+            end
           when "percent":
-            commission_total = self.item_total.to_f * self.discount_code.commission_rate.to_f / 100.00
+            commission = self.item_total.to_f * self.discount_code.commission_rate.to_f / 100.00
           end
+        end
+        
+        self[:commission_total] = commission
+      end
+      
+      private
+      def find_discount_code
+        if self.discount_code_code
+          self.discount_code = DiscountCode.find_by_code(self.discount_code_code.upcase)
+        end
+      end
+      
+      def discount_scope
+        return [] unless self.discount_code
+        
+        if self.discount_code.product
+          valid_variants = self.discount_code.product.variants.collect {|v| v.id}
+          self.line_items.find(:all, :conditions => {:variant_id => valid_variants})
+        else
+          self.line_items
         end
       end
       

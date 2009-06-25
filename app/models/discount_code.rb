@@ -1,5 +1,6 @@
 class DiscountCode < ActiveRecord::Base
   belongs_to :user
+  belongs_to :product
   
   default_value_for :discount_type, "dollar amount"
   
@@ -30,7 +31,7 @@ class DiscountCode < ActiveRecord::Base
   end
   
   def self.type_options
-    ['dollar amount', 'percent']
+    ['dollar amount', 'dollar amount per item', 'percent']
   end
   
   # Checks the database to ensure the specified code is not taken

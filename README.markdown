@@ -11,8 +11,10 @@ We also will add some columns to the Order model.
 	order.commission_total => likewise 
 
 The methods added:
-	order.calculate_discount
-	order.calculate_commission
+	order.discount_total
+	order.commission_total
+	order.total_with_discount
+	order.total_without_discount
 
 ## theory
 

@@ -4,7 +4,7 @@
 
 <h3><%= "#{t("subtotal")}: #{order_price(@order)}" %></h3>
 <% if @order.discount_code %>
-<h3><%= "Discount: $#{ @order.calculate_discount }"%></h3>
+<h3><%= "Discount: $#{ @order.discount_total }"%></h3>
 <% end %>
 
 <div id="checkout">

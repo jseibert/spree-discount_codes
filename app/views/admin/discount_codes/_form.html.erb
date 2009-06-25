@@ -32,6 +32,12 @@
       <%= f.error_message_on :comments%>
     <% end %>
     
+    <% f.field_container :product_id do %>
+      <%= f.label :product_id, t("product_required") %> <br />
+      <%= f.collection_select(:product_id, @products, :id, :name, {:include_blank => true}, {"style" => "font-size: 1.5em;"}) %>
+      <%= f.error_message_on :product_id %>
+    <% end %>
+    
     <p>
       <%= f.label :available_on, t("available_on") %><br />
       <%= f.error_message_on :available_on %>

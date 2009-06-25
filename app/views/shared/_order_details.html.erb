@@ -32,7 +32,7 @@
 	<% if @order.discount_code %>
   <tr>
     <td colspan="3"><b>Discounts:</b> </td>
-    <td class="total_display"><span id="discount_total"><%= number_to_currency @order.calculate_discount() -%></span></td>
+    <td class="total_display"><span id="discount_total"><%= number_to_currency @order.discount_total -%></span></td>
   </tr>
 	<% end %>
   <tr>
